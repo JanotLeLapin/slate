@@ -32,5 +32,10 @@ interface Sidebar {
     /**
      * Updates the lines of the scoreboard
      */
-    fun lines(lines: Array<String?>)
+    fun lines(vararg lines: String?)
+
+    /**
+     * Updates the lines of the scoreboard
+     */
+    fun lines(vararg lines: Component?)
 }

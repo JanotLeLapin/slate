@@ -11,15 +11,19 @@ class SlateSidebar(
     override val objective: Objective,
     override val title: Component,
 ) : Sidebar {
-    private var lines: Array<String?> = arrayOfNulls(10)
+    private var lines: Array<out String?> = arrayOfNulls(10)
 
-    override fun lines(lines: Array<String?>) {
+    override fun lines(vararg lines: String?) {
         for (line in this.lines) {
             if (line == null) break
             scoreboard.resetScores(line)
         }
         for (i in lines.indices) objective.getScore(lines[i]).score = lines.size - i
         this.lines = lines
+    }
+
+    override fun lines(vararg lines: Component?) {
+        this.lines(*lines.map { it?.legacy() }.toTypedArray())
     }
 
     init {
