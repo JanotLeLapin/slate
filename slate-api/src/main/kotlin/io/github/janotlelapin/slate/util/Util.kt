@@ -126,20 +126,8 @@ private fun Player.metadata(key: String, value: Any, plugin: JavaPlugin) {
  */
 @Suppress("UNCHECKED_CAST")
 inline fun <reified S : GameSettings> Player.game(): Game<S>? {
-    val game = this.game ?: return null
-    if (game.settings is S) return game as Game<S>
-    return null
+    return this.world.game()
 }
-
-/**
- * The game this player is in
- */
-var Player.game: Game<out GameSettings>?
-    get() {
-        val id = metadata("game") ?: return null
-        return slateInstance().gameManager.game(UUID.fromString(id.asString()))
-    }
-    set(value) = if (value != null) metadata("game", value.id, value.plugin) else Unit
 
 private fun World.ground(x: Int, z: Int, start: Int = 48, end: Int = 255): Int? {
     if (start > end) return null
@@ -192,4 +180,17 @@ fun World.delete() {
     if (!Bukkit.unloadWorld(this, false)) throw IOException("Could not unload World")
 
     FileUtils.deleteDirectory(worldFolder)
+}
+
+/**
+ * @return The game that uses this world
+ */
+@Suppress("UNCHECKED_CAST")
+inline fun <reified S : GameSettings> World.game(): Game<S>? {
+    val tokens = this.name.split("_")
+    if (tokens.size <= 1) return null
+
+    val game = slateInstance().gameManager.game(UUID.fromString(tokens[1])) ?: return null
+    if (game.settings is S) return game as Game<S>
+    return null
 }
