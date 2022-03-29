@@ -135,7 +135,7 @@ private fun World.ground(x: Int, z: Int, start: Int = 48, end: Int = 255): Int? 
     val y = floor(((start + end) / 2).toDouble()).toInt()
     val block = getBlockAt(x, y, z).type
 
-    if (block == Material.GRASS) return y
+    if (block == Material.GRASS) return y + 1
     if (block == Material.AIR) return ground(x, z, start, y - 1)
     return ground(x, z, y + 1, end)
 }
@@ -151,7 +151,11 @@ fun World.randomCoordinates(range: Int = 500): Location {
         val z = random()
         val y = ground(x, z) ?: continue
 
-        return Location(this, (x + .5), (y + .5), (z + .5))
+        for (i in 1..4) {
+            if (getBlockAt(x, y + i, z).type != Material.AIR) continue
+        }
+
+        return Location(this, x + .5, y.toDouble(), z + .5)
     }
 }
 
