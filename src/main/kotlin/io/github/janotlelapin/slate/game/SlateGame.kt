@@ -15,13 +15,16 @@ import kotlin.collections.ArrayList
 
 class SlateGame<S : GameSettings>(
     override val plugin: JavaPlugin,
-    override val settings: S,
+    settingsClass: Class<S>,
 ) : Game<S> {
     override val id: UUID = UUID.randomUUID()
     override val players: ArrayList<UUID> = ArrayList()
 
-    override val taskManager: SlateTaskManager = SlateTaskManager()
     override val scoreboard: Scoreboard = plugin.server.scoreboardManager.newScoreboard
+    override val taskManager: SlateTaskManager = SlateTaskManager()
+    override val settings: S = settingsClass
+        .getDeclaredConstructor(Game::class.java)
+        .newInstance(this)
     override val objective: Objective = scoreboard.registerNewObjective(id.toString().substring(0, 8), "dummy")
     override val sidebar: SlateSidebar = SlateSidebar(
         id,
@@ -87,8 +90,6 @@ class SlateGame<S : GameSettings>(
             it.clear()
 
             it.scoreboard = scoreboard
-
-            it.game = this
         }
 
         world.worldBorder.setCenter(0.0, 0.0)
@@ -108,8 +109,9 @@ class SlateGame<S : GameSettings>(
             }
         }
 
+        settings.start()
         taskManager.register(object: BukkitRunnable() {
-            override fun run() { settings.update(game) }
+            override fun run() { settings.update() }
         }.runTaskTimer(plugin, 0, 20))
     }
 
@@ -127,9 +129,6 @@ class SlateGame<S : GameSettings>(
 
     override val time: Long
         get() = world.fullTime - startTime
-
-    val game: SlateGame<out GameSettings>
-        get() = this
 
     init {
         objective.displaySlot = DisplaySlot.SIDEBAR

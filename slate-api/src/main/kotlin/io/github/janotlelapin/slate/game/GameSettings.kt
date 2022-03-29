@@ -6,6 +6,11 @@ import org.bukkit.block.Biome
 
 abstract class GameSettings {
     /**
+     * The game instance linked to this GameSettings
+     */
+    abstract val game: Game<out GameSettings>
+
+    /**
      * The display name of the game mode
      */
     abstract val brand: Component
@@ -13,7 +18,12 @@ abstract class GameSettings {
     /**
      * Runs every second
      */
-    abstract fun update(game: Game<out GameSettings>)
+    abstract fun update()
+
+    /**
+     * Runs when the game starts
+     */
+    abstract fun start()
 
     /**
      * Border size and time specifications

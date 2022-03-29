@@ -16,10 +16,10 @@ class SlateGameManager : GameManager {
 
     override fun create(
         plugin: JavaPlugin,
-        settings: GameSettings,
+        settingsClass: Class<out GameSettings>,
         onFinish: (game: Game<out GameSettings>) -> Unit
     ) {
-        pending = SlateGame(plugin, settings)
+        pending = SlateGame(plugin, settingsClass)
         pending!!.prepare(onFinish)
     }
 

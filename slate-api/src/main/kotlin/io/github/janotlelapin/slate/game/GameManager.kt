@@ -15,7 +15,7 @@ interface GameManager {
      */
     fun create(
         plugin: JavaPlugin,
-        settings: GameSettings,
+        settingsClass: Class<out GameSettings>,
         onFinish: (game: Game<out GameSettings>) -> Unit,
     )
 
