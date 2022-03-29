@@ -32,6 +32,13 @@ fun slateInstance(): SlatePlugin {
 }
 
 /**
+ * @return a human-readable time representation of this number
+ */
+fun Number.toTimeString(): String {
+    return String.format("%02d:%02d", this.toLong() / 60, this.toLong() % 60)
+}
+
+/**
  * @return Serializes this component as a legacy string
  */
 fun Component.legacy(): String {
