@@ -2,6 +2,7 @@ package io.github.janotlelapin.slate.util
 
 import io.github.janotlelapin.slate.SlatePlugin
 import io.github.janotlelapin.slate.game.Game
+import io.github.janotlelapin.slate.game.GameSettings
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
@@ -114,9 +115,19 @@ private fun Player.metadata(key: String, value: Any, plugin: JavaPlugin) {
 }
 
 /**
+ * @return The game this player is in
+ */
+@Suppress("UNCHECKED_CAST")
+inline fun <reified S : GameSettings> Player.game(): Game<S>? {
+    val game = this.game ?: return null
+    if (game.settings is S) return game as Game<S>
+    return null
+}
+
+/**
  * The game this player is in
  */
-var Player.game: Game?
+var Player.game: Game<out GameSettings>?
     get() {
         val id = metadata("game") ?: return null
         return slateInstance().gameManager.game(UUID.fromString(id.asString()))

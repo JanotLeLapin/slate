@@ -13,10 +13,10 @@ import org.bukkit.scoreboard.Scoreboard
 import java.util.*
 import kotlin.collections.ArrayList
 
-class SlateGame(
+class SlateGame<S : GameSettings>(
     override val plugin: JavaPlugin,
-    override val settings: GameSettings,
-) : Game {
+    override val settings: S,
+) : Game<S> {
     override val id: UUID = UUID.randomUUID()
     override val players: ArrayList<UUID> = ArrayList()
 
@@ -41,7 +41,7 @@ class SlateGame(
         return players.map { plugin.server.getPlayer(it) }
     }
 
-    private fun loadChunks(layer: Int, onFinish: (game: Game) -> Unit) {
+    private fun loadChunks(layer: Int, onFinish: (game: Game<out GameSettings>) -> Unit) {
         val g = this
         object: BukkitRunnable() {
             override fun run() {
@@ -57,7 +57,7 @@ class SlateGame(
         }.runTaskLater(plugin, 20)
     }
 
-    fun prepare(onFinish: (game: Game) -> Unit) {
+    fun prepare(onFinish: (game: Game<out GameSettings>) -> Unit) {
         object: BukkitRunnable() {
             override fun run() {
                 plugin.logger.info("Creating world for $id")
@@ -87,6 +87,8 @@ class SlateGame(
             it.clear()
 
             it.scoreboard = scoreboard
+
+            it.game = this
         }
 
         world.worldBorder.setCenter(0.0, 0.0)
@@ -126,7 +128,7 @@ class SlateGame(
     override val time: Long
         get() = world.fullTime - startTime
 
-    val game: SlateGame
+    val game: SlateGame<out GameSettings>
         get() = this
 
     init {

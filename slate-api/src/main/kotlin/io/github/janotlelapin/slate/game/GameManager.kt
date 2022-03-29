@@ -8,7 +8,7 @@ interface GameManager {
     /**
      * @return A running game with the specified ID
      */
-    fun game(id: UUID): Game?
+    fun game(id: UUID): Game<out GameSettings>?
 
     /**
      * Creates a game
@@ -16,7 +16,7 @@ interface GameManager {
     fun create(
         plugin: JavaPlugin,
         settings: GameSettings,
-        onFinish: (game: Game) -> Unit,
+        onFinish: (game: Game<out GameSettings>) -> Unit,
     )
 
     /**
@@ -25,5 +25,5 @@ interface GameManager {
      * @throws IllegalStateException No game is currently pending
      * @return The started game
      */
-    fun start(players: Collection<Player>): Game
+    fun start(players: Collection<Player>): Game<out GameSettings>
 }

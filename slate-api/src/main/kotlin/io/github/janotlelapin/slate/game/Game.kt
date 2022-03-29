@@ -8,7 +8,7 @@ import org.bukkit.scoreboard.Objective
 import org.bukkit.scoreboard.Scoreboard
 import java.util.*
 
-interface Game {
+interface Game<S : GameSettings> {
     /**
      * The unique identifier of this game
      */
@@ -27,7 +27,7 @@ interface Game {
     /**
      * Basic settings for this game
      */
-    val settings: GameSettings
+    val settings: S
 
     /**
      * The custom sidebar shown to players in this game
