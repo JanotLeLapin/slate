@@ -33,7 +33,7 @@ class SlateGame<S : GameSettings>(
         settings.brand,
     )
 
-    private lateinit var world: World
+    override lateinit var world: World
     private var startTime: Long = -1
 
     override fun allPlayers(): List<OfflinePlayer> {

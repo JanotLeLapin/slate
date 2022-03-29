@@ -2,6 +2,7 @@ package io.github.janotlelapin.slate.game
 
 import io.github.janotlelapin.slate.util.Sidebar
 import org.bukkit.OfflinePlayer
+import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scoreboard.Objective
@@ -44,6 +45,11 @@ interface Game<S : GameSettings> {
      * The objective used by the scoreboard to display the sidebar
      */
     val objective: Objective
+
+    /**
+     * The world in which this game takes place
+     */
+    var world: World
 
     /**
      * A list of UUIDs for each player in the game
