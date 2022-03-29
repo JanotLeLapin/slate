@@ -33,13 +33,13 @@ abstract class GameSettings {
      *
      * Defaults to a static border of 1000 square meters
      */
-    val borderSize: Map<Array<Int>, Int> = hashMapOf(emptyArray<Int>() to 1000)
+    open val borderSize: Map<Array<Int>, Int> = hashMapOf(emptyArray<Int>() to 1000)
 
     /**
      * A list of biomes that the game should avoid using
      * in its world.
      */
-    val badBiomes: Set<Biome> = hashSetOf(
+    open val badBiomes: Set<Biome> = hashSetOf(
         Biome.DEEP_OCEAN,
         Biome.DESERT,
         Biome.MESA,
@@ -49,8 +49,7 @@ abstract class GameSettings {
     /**
      * The message sent to each player when the border is shrinking
      */
-    val shrinkBorderMessage: Component = Component
+    open val shrinkBorderMessage: Component = Component
         .text("The border is shrinking.")
         .color(NamedTextColor.RED)
 }
-
