@@ -1,0 +1,6 @@
+name: Slate
+api-version: 1.8
+version: 1.0-SNAPSHOT
+author: JanotLeLapin
+load: STARTUP
+main: io.github.janotlelapin.slate.JavaSlatePlugin

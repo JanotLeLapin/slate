@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'maven-publish'
+}
+
+group 'io.github.janotlelapin.slate'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+}
+
+dependencies {
+    compileOnly 'com.github.azbh111:craftbukkit-1.8.8:R'
+    api 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
+
+    api 'net.kyori:adventure-api:4.10.1'
+    api 'net.kyori:adventure-text-serializer-legacy:4.10.1'
+    api 'net.kyori:adventure-text-serializer-gson:4.10.1'
+
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.10'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'io.github.janotlelapin.slate'
+            artifactId = 'slate-api'
+            version = '1.0-SNAPSHOT'
+
+            from components.java
+        }
+    }
+}
