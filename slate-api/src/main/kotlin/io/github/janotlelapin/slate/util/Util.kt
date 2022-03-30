@@ -118,13 +118,28 @@ private fun Player.metadata(key: String): MetadataValue? {
 }
 
 private fun Player.metadata(key: String, value: Any, plugin: JavaPlugin) {
+    removeMetadata(key, plugin)
     setMetadata(key, FixedMetadataValue(plugin, value))
+}
+
+/**
+ * @return Whether the game considers this player dead
+ */
+fun Player.isGameDead(): Boolean {
+    return this.hasMetadata("dead")
+}
+
+/**
+ * Sets whether the game considers this player dead
+ */
+fun Player.isGameDead(gameDead: Boolean, plugin: JavaPlugin) {
+    if (gameDead) this.metadata("dead", true, plugin)
+    else this.removeMetadata("dead", plugin)
 }
 
 /**
  * @return The game this player is in
  */
-@Suppress("UNCHECKED_CAST")
 inline fun <reified S : GameSettings> Player.game(): Game<S>? {
     return this.world.game()
 }
