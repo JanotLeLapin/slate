@@ -168,7 +168,7 @@ inline fun <reified S : GameSettings> Player.game(): Game<S>? {
     return this.world.game()
 }
 
-private fun World.ground(x: Int, z: Int, start: Int = 48, end: Int = 255): Int? {
+fun World.ground(x: Int, z: Int, start: Int = 48, end: Int = 255): Int? {
     if (start > end) return null
 
     val y = floor(((start + end) / 2).toDouble()).toInt()
