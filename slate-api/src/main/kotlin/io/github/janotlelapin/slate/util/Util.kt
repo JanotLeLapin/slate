@@ -152,6 +152,15 @@ fun Player.isGameDead(gameDead: Boolean, plugin: JavaPlugin) {
     else this.removeMetadata("dead", plugin)
 }
 
+fun Player.lastAttacker(): Player? {
+    val id = this.metadata("lastAttacker") ?: return null
+    return this.server.getPlayer(UUID.fromString(id.asString()))
+}
+
+fun Player.lastAttacker(player: Player, plugin: JavaPlugin) {
+    this.metadata("lastAttacker", player.uniqueId, plugin)
+}
+
 /**
  * @return The game this player is in
  */

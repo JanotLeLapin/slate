@@ -4,8 +4,11 @@ import io.github.janotlelapin.slate.game.GameSettings
 import io.github.janotlelapin.slate.game.SlateGameManager
 import io.github.janotlelapin.slate.util.game
 import io.github.janotlelapin.slate.util.isGameDead
+import io.github.janotlelapin.slate.util.lastAttacker
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.world.ChunkUnloadEvent
 import org.bukkit.plugin.java.JavaPlugin
@@ -21,6 +24,13 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
 
     override fun onDisable() {
         gameManager.clear()
+    }
+
+    @EventHandler
+    fun onEntityDamage(e: EntityDamageByEntityEvent) {
+        if (e.entity is Player && e.damager is Player) {
+            (e.entity as Player).lastAttacker(e.damager as Player, this)
+        }
     }
 
     @EventHandler
