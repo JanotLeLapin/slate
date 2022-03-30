@@ -161,13 +161,14 @@ private fun World.ground(x: Int, z: Int, start: Int = 48, end: Int = 255): Int? 
 fun World.randomCoordinates(range: Int = 500): Location {
     fun random() = ThreadLocalRandom.current().nextInt(-range, range)
 
+    cords@
     while (true) {
         val x = random()
         val z = random()
         val y = ground(x, z) ?: continue
 
         for (i in 1..4) {
-            if (getBlockAt(x, y + i, z).type != Material.AIR) continue
+            if (getBlockAt(x, y + i, z).type != Material.AIR) continue@cords
         }
 
         return Location(this, x + .5, y.toDouble(), z + .5)
