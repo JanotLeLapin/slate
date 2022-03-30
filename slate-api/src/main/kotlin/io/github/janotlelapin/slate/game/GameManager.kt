@@ -26,4 +26,9 @@ interface GameManager {
      * @return The started game
      */
     fun start(players: Collection<Player>): Game<out GameSettings>
+
+    /**
+     * Stops the specified game
+     */
+    fun stop(game: Game<out GameSettings>)
 }

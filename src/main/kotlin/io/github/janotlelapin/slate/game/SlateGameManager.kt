@@ -35,6 +35,11 @@ class SlateGameManager : GameManager {
         return game
     }
 
+    override fun stop(game: Game<out GameSettings>) {
+        val g = games.remove(game.id) ?: return
+        g.stop()
+    }
+
     fun clear() {
         val it = games.iterator()
         while (it.hasNext()) {
