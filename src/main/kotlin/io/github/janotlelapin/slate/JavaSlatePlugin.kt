@@ -1,15 +1,22 @@
 package io.github.janotlelapin.slate
 
+import io.github.janotlelapin.slate.game.Game
 import io.github.janotlelapin.slate.game.GameSettings
 import io.github.janotlelapin.slate.game.SlateGameManager
 import io.github.janotlelapin.slate.util.game
 import io.github.janotlelapin.slate.util.isGameDead
 import io.github.janotlelapin.slate.util.lastAttacker
+import io.github.janotlelapin.slate.util.sendMessage
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.player.AsyncPlayerChatEvent
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.world.ChunkUnloadEvent
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -24,6 +31,40 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
 
     override fun onDisable() {
         gameManager.clear()
+    }
+
+    @EventHandler
+    fun onChat(e: AsyncPlayerChatEvent) {
+        val game = e.player.game<GameSettings>() ?: return
+
+        e.isCancelled = true
+        e.player.sendMessage(game.settings.noChatMessage)
+    }
+
+    @EventHandler
+    fun onJoin(e: PlayerJoinEvent) {
+        val msg = Component
+            .text("[").color(NamedTextColor.GRAY)
+            .append(Component.text("+").color(NamedTextColor.GREEN))
+            .append(Component.text("]"))
+            .append(Component.space())
+            .append(Component.text("${e.player.name} a rejoint la partie"))
+
+        e.joinMessage = null
+        e.player.world.players.forEach { it.sendMessage(msg) }
+    }
+
+    @EventHandler
+    fun onDeath(e: PlayerQuitEvent) {
+        val msg = Component
+            .text("[").color(NamedTextColor.GRAY)
+            .append(Component.text("-").color(NamedTextColor.RED))
+            .append(Component.text("]"))
+            .append(Component.space())
+            .append(Component.text("${e.player.name} a quitté la partie"))
+
+        e.quitMessage = null
+        e.player.world.players.forEach { it.sendMessage(msg) }
     }
 
     @EventHandler

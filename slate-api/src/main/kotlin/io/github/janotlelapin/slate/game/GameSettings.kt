@@ -62,4 +62,11 @@ abstract class GameSettings {
     open val shrinkBorderMessage: Component = Component
         .text("The border is shrinking.")
         .color(NamedTextColor.RED)
+
+    /**
+     * The message sent to a player when the border is disabled
+     */
+    open val noChatMessage: Component = Component
+        .text("The chat is disabled.")
+        .color(NamedTextColor.RED)
 }
