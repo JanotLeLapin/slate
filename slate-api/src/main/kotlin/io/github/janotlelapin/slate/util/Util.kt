@@ -117,7 +117,7 @@ fun Player.findNearestPlayer(range: Double): Player? {
     var distance = Double.MAX_VALUE
     var nearest: Player? = null
     this.getNearbyEntities(range, range, range).forEach {
-        if (it is Player && !it.isDead) {
+        if (it is Player && !it.isGameDead()) {
             val newDistance = this.location.distance(it.location)
             if (newDistance < distance) {
                 nearest = it
