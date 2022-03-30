@@ -113,6 +113,21 @@ fun Player.clear() {
     level = 0
 }
 
+fun Player.findNearestPlayer(range: Double): Player? {
+    var distance = Double.MAX_VALUE
+    var nearest: Player? = null
+    this.getNearbyEntities(range, range, range).forEach {
+        if (it is Player && !it.isDead) {
+            val newDistance = this.location.distance(it.location)
+            if (newDistance < distance) {
+                nearest = it
+                distance = newDistance
+            }
+        }
+    }
+    return nearest
+}
+
 private fun Player.metadata(key: String): MetadataValue? {
     return if (hasMetadata(key)) getMetadata(key)[0] else null
 }
