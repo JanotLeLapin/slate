@@ -72,8 +72,8 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
         val p = e.entity
         if (p !is Player) return
 
-        if (p.game<GameSettings>() == null) return
-        e.foodLevel = 20
+        if (p.game<GameSettings>() == null)
+            e.foodLevel = 20
     }
 
     @EventHandler
@@ -81,8 +81,8 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
         val p = e.entity
         if (p !is Player) return
 
-        if (p.game<GameSettings>() == null) return
-        e.isCancelled = true
+        if (p.game<GameSettings>() == null)
+            e.isCancelled = true
     }
 
     @EventHandler
