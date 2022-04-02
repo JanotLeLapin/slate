@@ -1,6 +1,5 @@
 package io.github.janotlelapin.slate
 
-import io.github.janotlelapin.slate.game.Game
 import io.github.janotlelapin.slate.game.GameSettings
 import io.github.janotlelapin.slate.game.SlateGameManager
 import io.github.janotlelapin.slate.util.game
@@ -13,6 +12,8 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerJoinEvent
@@ -31,6 +32,24 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
 
     override fun onDisable() {
         gameManager.clear()
+    }
+
+    @EventHandler
+    fun onFood(e: FoodLevelChangeEvent) {
+        val p = e.entity
+        if (p !is Player) return
+
+        if (p.game<GameSettings>() == null) return
+        e.foodLevel = 20
+    }
+
+    @EventHandler
+    fun onDamage(e: EntityDamageEvent) {
+        val p = e.entity
+        if (p !is Player) return
+
+        if (p.game<GameSettings>() == null) return
+        e.isCancelled = true
     }
 
     @EventHandler
