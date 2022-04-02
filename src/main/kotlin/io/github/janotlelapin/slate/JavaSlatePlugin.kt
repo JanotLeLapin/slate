@@ -1,5 +1,7 @@
 package io.github.janotlelapin.slate
 
+import io.github.janotlelapin.slate.event.GameListener
+import io.github.janotlelapin.slate.game.Game
 import io.github.janotlelapin.slate.game.GameSettings
 import io.github.janotlelapin.slate.game.SlateGameManager
 import io.github.janotlelapin.slate.util.game
@@ -9,20 +11,51 @@ import io.github.janotlelapin.slate.util.sendMessage
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.entity.Player
+import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.event.entity.EntityDamageEvent
-import org.bukkit.event.entity.FoodLevelChangeEvent
-import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.block.BlockEvent
+import org.bukkit.event.entity.*
 import org.bukkit.event.player.AsyncPlayerChatEvent
+import org.bukkit.event.player.PlayerEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.vehicle.VehicleEvent
+import org.bukkit.event.weather.WeatherEvent
 import org.bukkit.event.world.ChunkUnloadEvent
 import org.bukkit.plugin.java.JavaPlugin
 
 class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
     override val gameManager: SlateGameManager = SlateGameManager()
+
+    override fun registerEvents(settingsType: Class<out GameSettings>, listener: GameListener, plugin: JavaPlugin) {
+        for (handler in listener::class.java.declaredMethods) {
+            val annotation = handler.getDeclaredAnnotation(EventHandler::class.java) ?: continue
+
+            if (handler.parameterCount != 2) continue
+            val eventType = handler.parameterTypes[0] as Class<Event>
+
+            plugin.server.pluginManager.registerEvent(
+                eventType,
+                listener,
+                annotation.priority,
+                { _, e ->
+                    val game: Game<GameSettings> = when (e) {
+                        is BlockEvent -> e.block.world.game()
+                        is EntityEvent -> e.entity.world.game()
+                        is PlayerEvent -> e.player.game()
+                        is VehicleEvent -> e.vehicle.world.game()
+                        is WeatherEvent -> e.world.game()
+                        else -> null
+                    } ?: return@registerEvent
+
+                    if (game.settings::class.java == settingsType && eventType.isInstance(e))
+                        handler.invoke(listener, e, game)
+                },
+                plugin,
+            )
+        }
+    }
 
     override fun onEnable() {
         server.pluginManager.registerEvents(this, this)
