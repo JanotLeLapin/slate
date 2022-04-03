@@ -10,6 +10,7 @@ import io.github.janotlelapin.slate.util.lastAttacker
 import io.github.janotlelapin.slate.util.sendMessage
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -109,7 +110,7 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
     }
 
     @EventHandler
-    fun onDeath(e: PlayerQuitEvent) {
+    fun onQuit(e: PlayerQuitEvent) {
         val msg = Component
             .text("[").color(NamedTextColor.GRAY)
             .append(Component.text("-").color(NamedTextColor.RED))
@@ -130,8 +131,13 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
 
     @EventHandler
     fun onPlayerDeath(e: PlayerDeathEvent) {
-        val game = e.entity.game<GameSettings>() ?: return
-        e.entity.isGameDead(true, game.plugin)
+        val p = e.entity
+        val game = p.game<GameSettings>() ?: return
+        val l = p.location
+        p.isGameDead(true, game.plugin)
+        p.spigot().respawn()
+        p.teleport(l)
+        p.gameMode = GameMode.SPECTATOR
     }
 
     @EventHandler
