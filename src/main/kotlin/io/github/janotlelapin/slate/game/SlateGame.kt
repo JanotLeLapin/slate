@@ -87,7 +87,7 @@ class SlateGame<S : GameSettings>(
             this.players.add(it.uniqueId)
 
             it.teleport(world.randomCoordinates(500))
-            it.clear()
+            it.clear(plugin)
 
             it.scoreboard = scoreboard
         }
@@ -120,7 +120,7 @@ class SlateGame<S : GameSettings>(
 
         val l = plugin.server.getWorld("world").spawnLocation
         onlinePlayers().forEach {
-            it.clear()
+            it.clear(plugin)
             it.teleport(l)
         }
 

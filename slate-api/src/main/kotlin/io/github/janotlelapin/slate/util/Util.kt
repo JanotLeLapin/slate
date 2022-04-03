@@ -107,7 +107,7 @@ fun Player.sendPlayerListHeaderAndFooter(header: Component, footer: Component) {
 /**
  * Clears the player, making it ready for games
  */
-fun Player.clear() {
+fun Player.clear(plugin: JavaPlugin) {
     inventory.clear()
     scoreboard = player.server.scoreboardManager.mainScoreboard
     foodLevel = 20
@@ -116,6 +116,11 @@ fun Player.clear() {
     totalExperience = 0
     exp = 0F
     level = 0
+
+    arrayOf(
+        "lastAttacker",
+        "dead"
+    ).forEach { removeMetadata(it, plugin) }
 }
 
 fun Player.findNearestPlayer(range: Double): Player? {
