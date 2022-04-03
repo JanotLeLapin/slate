@@ -6,15 +6,16 @@ import io.github.janotlelapin.slate.game.GameSettings
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import net.minecraft.server.v1_8_R3.ChatComponentText
-import net.minecraft.server.v1_8_R3.IChatBaseComponent
-import net.minecraft.server.v1_8_R3.PacketPlayOutChat
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter
+import net.minecraft.server.v1_8_R3.*
 import org.apache.commons.io.FileUtils
 import org.bukkit.*
+import org.bukkit.Material
+import org.bukkit.World
 import org.bukkit.command.CommandSender
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.entity.Player
+import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.metadata.MetadataValue
 import org.bukkit.plugin.java.JavaPlugin
@@ -191,7 +192,7 @@ fun World.randomCoordinates(range: Int = 500): Location {
         val z = random()
         val y = ground(x, z) ?: continue
 
-        for (i in 1..4) {
+        for (i in 0..4) {
             if (getBlockAt(x, y + i, z).type != Material.AIR) continue@cords
         }
 
@@ -237,4 +238,20 @@ inline fun <reified S : GameSettings> World.game(): Game<S>? {
     val game = slateInstance().gameManager.game(UUID.fromString(tokens[1])) ?: return null
     if (game.settings is S) return game as Game<S>
     return null
+}
+
+/**
+ * Sets the drop for a block
+ */
+fun BlockBreakEvent.setDrops(newDrops: Collection<ItemStack>) {
+    block.type = Material.AIR
+    newDrops.forEach {
+        block.world.dropItemNaturally(
+            Location(
+                block.world,
+                block.x + .5,
+                block.y + .5,
+                block.z + .5),
+            it)
+    }
 }
