@@ -4,6 +4,9 @@ import io.github.janotlelapin.slate.SlatePlugin
 import io.github.janotlelapin.slate.game.Game
 import io.github.janotlelapin.slate.game.GameSettings
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.JoinConfiguration
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.minecraft.server.v1_8_R3.*
@@ -24,6 +27,7 @@ import java.io.IOException
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.floor
+import kotlin.math.roundToInt
 
 /**
  * @return The Slate plugin instance
@@ -167,6 +171,33 @@ fun Player.lastAttacker(player: Player, plugin: JavaPlugin) {
  */
 inline fun <reified S : GameSettings> Player.game(): Game<S>? {
     return this.world.game()
+}
+
+/**
+ * @param numbers The style of the coordinate values
+ * @param uppercase Whether the coordinate keys should be uppercase
+ * @return This location as a component
+ */
+fun Location.toComponent(
+    numbers: Style = Style.style(NamedTextColor.GRAY),
+    uppercase: Boolean = true,
+): Component {
+    var comp = Component.empty()
+    hashMapOf(
+        (if (uppercase) "X" else "x") to x,
+        (if (uppercase) "Y" else "y") to y,
+        (if (uppercase) "Z" else "z") to z,
+    ).forEach { (key, value) ->
+        comp = comp.append(Component.join(
+            JoinConfiguration.noSeparators(),
+            Component.space(),
+            Component.text("$key:"),
+            Component.space(),
+            Component.text(value.roundToInt()).style(numbers),
+        ))
+    }
+
+    return comp
 }
 
 fun World.ground(x: Int, z: Int, start: Int = 48, end: Int = 255): Int? {
