@@ -16,6 +16,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockEvent
 import org.bukkit.event.entity.*
+import org.bukkit.event.inventory.InventoryEvent
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerEvent
 import org.bukkit.event.player.PlayerJoinEvent
@@ -43,6 +44,7 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
                     val game: Game<GameSettings> = when (e) {
                         is BlockEvent -> e.block.world.game()
                         is EntityEvent -> e.entity.world.game()
+                        is InventoryEvent -> e.view.player.world.game()
                         is PlayerEvent -> e.player.game()
                         is VehicleEvent -> e.vehicle.world.game()
                         is WeatherEvent -> e.world.game()
