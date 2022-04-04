@@ -1,5 +1,6 @@
 package io.github.janotlelapin.slate.scenarios
 
+import io.github.janotlelapin.slate.Scenario
 import io.github.janotlelapin.slate.event.GameListener
 import io.github.janotlelapin.slate.game.Game
 import org.bukkit.enchantments.Enchantment
@@ -16,6 +17,8 @@ class HastyBoysScenario : GameListener {
 
     @EventHandler
     fun onCraft(e: PrepareItemCraftEvent, game: Game<*>) {
+        if (!game.scenarios.contains(Scenario.HASTY_BOYS)) return
+
         val result = e.recipe.result.type
         val tokens = result.name.split("_")
         if (tokens.size < 2 || !items.contains(tokens[1])) return

@@ -1,5 +1,6 @@
 package io.github.janotlelapin.slate.game
 
+import io.github.janotlelapin.slate.Scenario
 import io.github.janotlelapin.slate.util.*
 import org.bukkit.OfflinePlayer
 import org.bukkit.World
@@ -16,6 +17,7 @@ import kotlin.collections.ArrayList
 class SlateGame<S : GameSettings>(
     override val plugin: JavaPlugin,
     settingsClass: Class<S>,
+    override val scenarios: Set<Scenario>,
 ) : Game<S> {
     override val id: UUID = UUID.randomUUID()
     override val players: ArrayList<UUID> = ArrayList()

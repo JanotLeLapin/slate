@@ -4,6 +4,8 @@ import io.github.janotlelapin.slate.event.GameListener
 import io.github.janotlelapin.slate.game.Game
 import io.github.janotlelapin.slate.game.GameSettings
 import io.github.janotlelapin.slate.game.SlateGameManager
+import io.github.janotlelapin.slate.scenarios.CutCleanScenario
+import io.github.janotlelapin.slate.scenarios.HastyBoysScenario
 import io.github.janotlelapin.slate.util.game
 import io.github.janotlelapin.slate.util.isGameDead
 import io.github.janotlelapin.slate.util.lastAttacker
@@ -62,6 +64,8 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
 
     override fun onEnable() {
         server.pluginManager.registerEvents(this, this)
+        registerEvents(GameSettings::class.java, CutCleanScenario(), this)
+        registerEvents(GameSettings::class.java, HastyBoysScenario(), this)
 
         logger.info("Enabling Slate")
     }

@@ -1,5 +1,6 @@
 package io.github.janotlelapin.slate.game
 
+import io.github.janotlelapin.slate.Scenario
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
@@ -16,6 +17,7 @@ interface GameManager {
     fun create(
         plugin: JavaPlugin,
         settingsClass: Class<out GameSettings>,
+        scenarios: Set<Scenario> = emptySet(),
         onFinish: (game: Game<out GameSettings>) -> Unit,
     )
 

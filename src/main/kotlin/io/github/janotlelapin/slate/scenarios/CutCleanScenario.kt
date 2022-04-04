@@ -1,5 +1,6 @@
 package io.github.janotlelapin.slate.scenarios
 
+import io.github.janotlelapin.slate.Scenario
 import io.github.janotlelapin.slate.event.GameListener
 import io.github.janotlelapin.slate.game.Game
 import io.github.janotlelapin.slate.util.setDrops
@@ -15,6 +16,8 @@ import org.bukkit.inventory.ItemStack
 class CutCleanScenario : GameListener {
     @EventHandler
     fun onBlockBreak(e: BlockBreakEvent, game: Game<*>) {
+        if (!game.scenarios.contains(Scenario.CUT_CLEAN)) return
+
         val material = when (e.block.type) {
             Material.IRON_ORE -> Material.IRON_INGOT
             Material.GOLD_ORE -> Material.GOLD_INGOT
@@ -26,6 +29,8 @@ class CutCleanScenario : GameListener {
 
     @EventHandler
     fun onEntityDeath(e: EntityDeathEvent, game: Game<*>) {
+        if (!game.scenarios.contains(Scenario.CUT_CLEAN)) return
+
         for (i in e.drops.indices) {
             val material = when (e.drops[i].type) {
                 Material.RAW_BEEF -> Material.COOKED_BEEF

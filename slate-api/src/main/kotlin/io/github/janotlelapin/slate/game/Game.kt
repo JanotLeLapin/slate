@@ -1,5 +1,6 @@
 package io.github.janotlelapin.slate.game
 
+import io.github.janotlelapin.slate.Scenario
 import io.github.janotlelapin.slate.util.Sidebar
 import org.bukkit.OfflinePlayer
 import org.bukkit.World
@@ -24,6 +25,11 @@ interface Game<S : GameSettings> {
      * The task manager for this game
      */
     val taskManager: TaskManager
+
+    /**
+     * A list of scenarios for this game
+     */
+    val scenarios: Set<Scenario>
 
     /**
      * Basic settings for this game
