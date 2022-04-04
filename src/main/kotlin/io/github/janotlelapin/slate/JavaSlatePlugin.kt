@@ -54,7 +54,7 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
                         else -> null
                     } ?: return@registerEvent
 
-                    if (game.settings::class.java == settingsType && eventType.isInstance(e))
+                    if (settingsType.isInstance(game.settings) && eventType.isInstance(e))
                         handler.invoke(listener, e, game)
                 },
                 plugin,
