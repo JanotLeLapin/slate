@@ -86,9 +86,8 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
     @EventHandler
     fun onDamage(e: EntityDamageEvent) {
         val p = e.entity
-        if (p !is Player) return
 
-        if (p.game<GameSettings>() == null)
+        if (p is Player && p.game<GameSettings>() == null)
             e.isCancelled = true
     }
 

@@ -37,6 +37,7 @@ class CutCleanScenario : GameListener {
                 Material.RAW_CHICKEN -> Material.COOKED_CHICKEN
                 Material.RABBIT -> Material.COOKED_RABBIT
                 Material.MUTTON -> Material.COOKED_MUTTON
+                Material.PORK -> Material.GRILLED_PORK
                 else -> null
             } ?: continue
 
