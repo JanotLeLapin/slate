@@ -6,13 +6,9 @@ import io.github.janotlelapin.slate.game.GameSettings
 import io.github.janotlelapin.slate.game.SlateGameManager
 import io.github.janotlelapin.slate.scenarios.CutCleanScenario
 import io.github.janotlelapin.slate.scenarios.HastyBoysScenario
-import io.github.janotlelapin.slate.util.game
-import io.github.janotlelapin.slate.util.isGameDead
-import io.github.janotlelapin.slate.util.lastAttacker
-import io.github.janotlelapin.slate.util.sendMessage
+import io.github.janotlelapin.slate.util.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -101,6 +97,14 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
 
     @EventHandler
     fun onJoin(e: PlayerJoinEvent) {
+        val p = e.player
+
+        val game = p.game<GameSettings>()
+        if (game == null)
+            p.clear(this)
+        else
+            p.scoreboard = game.scoreboard
+
         val msg = Component
             .text("[").color(NamedTextColor.GRAY)
             .append(Component.text("+").color(NamedTextColor.GREEN))
@@ -109,7 +113,7 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
             .append(Component.text("${e.player.name} a rejoint la partie"))
 
         e.joinMessage = null
-        e.player.world.players.forEach { it.sendMessage(msg) }
+        p.world.players.forEach { it.sendMessage(msg) }
     }
 
     @EventHandler
@@ -127,20 +131,21 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
 
     @EventHandler
     fun onEntityDamage(e: EntityDamageByEntityEvent) {
-        if (e.entity is Player && e.damager is Player) {
-            (e.entity as Player).lastAttacker(e.damager as Player, this)
-        }
+        val ent = e.entity
+        val dmg = e.damager
+        if (ent is Player && dmg is Player)
+            ent.lastAttacker(dmg, this)
     }
 
     @EventHandler
     fun onPlayerDeath(e: PlayerDeathEvent) {
         val p = e.entity
         val game = p.game<GameSettings>() ?: return
+
         val l = p.location
         p.isGameDead(true, game.plugin)
         p.spigot().respawn()
         p.teleport(l)
-        p.gameMode = GameMode.SPECTATOR
     }
 
     @EventHandler

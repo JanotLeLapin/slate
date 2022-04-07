@@ -116,11 +116,9 @@ fun Player.clear(plugin: JavaPlugin) {
     totalExperience = 0
     exp = 0F
     level = 0
+    isGameDead(false, plugin)
 
-    arrayOf(
-        "lastAttacker",
-        "dead"
-    ).forEach { removeMetadata(it, plugin) }
+    removeMetadata("lastAttacker", plugin)
 }
 
 fun Player.findNearestPlayer(range: Double): Player? {
@@ -158,7 +156,13 @@ fun Player.isGameDead(): Boolean {
  * Sets whether the game considers this player dead
  */
 fun Player.isGameDead(gameDead: Boolean, plugin: JavaPlugin) {
-    if (gameDead) this.metadata("dead", true, plugin)
+    this.game<GameSettings>() ?: return
+
+    this.gameMode = if (gameDead) GameMode.SPECTATOR else GameMode.SURVIVAL
+    if (gameDead) {
+        this.inventory.clear()
+        this.metadata("dead", true, plugin)
+    }
     else this.removeMetadata("dead", plugin)
 }
 
