@@ -42,7 +42,7 @@ class SlateGame<S : GameSettings>(
     )
 
     override lateinit var world: World
-    var waitWorld: World? = null
+    private var waitWorld: World? = null
     private var startTime: Long = -1
 
     override fun host(): OfflinePlayer {
@@ -54,7 +54,7 @@ class SlateGame<S : GameSettings>(
     }
 
     override fun onlinePlayers(): List<Player> {
-        return players.map { plugin.server.getPlayer(it) }
+        return if (running) players.map { plugin.server.getPlayer(it) } else waitWorld?.players ?: listOf()
     }
 
     private fun loadChunks(layer: Int, onFinish: (game: Game<out GameSettings>) -> Unit) {
