@@ -29,7 +29,7 @@ interface Game<S : GameSettings> {
     /**
      * A list of scenarios for this game
      */
-    val scenarios: Set<Scenario>
+    val scenarios: HashSet<Scenario>
 
     /**
      * Basic settings for this game
@@ -58,6 +58,11 @@ interface Game<S : GameSettings> {
     var world: World
 
     /**
+     * The id of the creator of the game
+     */
+    val host: UUID
+
+    /**
      * A list of UUIDs for each player in the game
      */
     val players: List<UUID>
@@ -68,6 +73,11 @@ interface Game<S : GameSettings> {
     val time: Long
 
     /**
+     * @return The owner of this game
+     */
+    fun host(): OfflinePlayer
+
+    /**
      * @return A list of online players in this game
      */
     fun onlinePlayers(): List<Player>
@@ -76,4 +86,14 @@ interface Game<S : GameSettings> {
      * @return A list of each player in this game, including offline ones
      */
     fun allPlayers(): List<OfflinePlayer>
+
+    /**
+     * @return Whether this game can be started
+     */
+    fun ready(): Boolean
+
+    /**
+     * @return Whether this game is running
+     */
+    fun running(): Boolean
 }

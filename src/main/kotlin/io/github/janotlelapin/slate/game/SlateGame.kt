@@ -2,6 +2,7 @@ package io.github.janotlelapin.slate.game
 
 import io.github.janotlelapin.slate.Scenario
 import io.github.janotlelapin.slate.util.*
+import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 import org.bukkit.World
 import org.bukkit.WorldCreator
@@ -16,11 +17,16 @@ import kotlin.collections.ArrayList
 
 class SlateGame<S : GameSettings>(
     override val plugin: JavaPlugin,
+    override val host: UUID,
     settingsClass: Class<S>,
-    override val scenarios: Set<Scenario>,
 ) : Game<S> {
     override val id: UUID = UUID.randomUUID()
     override val players: ArrayList<UUID> = ArrayList()
+
+    private var ready: Boolean = false
+    private var running: Boolean = false
+
+    override val scenarios: HashSet<Scenario> = hashSetOf()
 
     override val scoreboard: Scoreboard = plugin.server.scoreboardManager.newScoreboard
     override val taskManager: SlateTaskManager = SlateTaskManager()
@@ -36,7 +42,12 @@ class SlateGame<S : GameSettings>(
     )
 
     override lateinit var world: World
+    var waitWorld: World? = null
     private var startTime: Long = -1
+
+    override fun host(): OfflinePlayer {
+        return plugin.server.getOfflinePlayer(host)
+    }
 
     override fun allPlayers(): List<OfflinePlayer> {
         return players.map { plugin.server.getOfflinePlayer(it) }
@@ -56,13 +67,26 @@ class SlateGame<S : GameSettings>(
 
                 if (x + 16 > 500) {
                     plugin.logger.info("Chunks for $id loaded")
+                    ready = true
                     onFinish(g)
                 } else loadChunks(layer + 1, onFinish)
             }
         }.runTaskLater(plugin, 20)
     }
 
-    fun prepare(onFinish: (game: Game<out GameSettings>) -> Unit) {
+    fun prepare(
+        onFinish: (game: Game<out GameSettings>) -> Unit,
+        waitingWorldName: String = "wait",
+    ) {
+        if (ready) return
+
+        waitWorld = plugin.server.getWorld(waitingWorldName).copy("wait_$id")
+        host().let { if (it is Player) it.teleport(Location(
+            waitWorld,
+            0.0,
+            75.0,
+            0.0)) }
+
         object: BukkitRunnable() {
             override fun run() {
                 plugin.logger.info("Creating world for $id")
@@ -70,8 +94,7 @@ class SlateGame<S : GameSettings>(
                 if (settings.badBiomes.contains(w.getBiome(0, 0))) {
                     w.delete()
                     prepare(onFinish)
-                }
-                else {
+                } else {
                     world = w
                     loadChunks(0, onFinish)
                 }
@@ -80,7 +103,7 @@ class SlateGame<S : GameSettings>(
     }
 
     fun start(players: Collection<Player>) {
-        if (!this::world.isInitialized) throw IllegalStateException("World not initialized")
+        if (!ready || running) return
 
         plugin.logger.info("Starting game $id")
         startTime = world.fullTime
@@ -115,10 +138,12 @@ class SlateGame<S : GameSettings>(
         taskManager.register(object: BukkitRunnable() {
             override fun run() { settings.update() }
         }.runTaskTimer(plugin, 0, 20))
+
+        running = true
     }
 
     fun stop() {
-        taskManager.clear()
+        if (running) taskManager.clear()
 
         val l = plugin.server.getWorld("world").spawnLocation
         onlinePlayers().forEach {
@@ -126,11 +151,22 @@ class SlateGame<S : GameSettings>(
             it.teleport(l)
         }
 
+        waitWorld?.delete()
         world.delete()
+
+        running = false
     }
 
     override val time: Long
         get() = world.fullTime - startTime
+
+    override fun ready(): Boolean {
+        return ready
+    }
+
+    override fun running(): Boolean {
+        return running
+    }
 
     init {
         objective.displaySlot = DisplaySlot.SIDEBAR

@@ -16,8 +16,8 @@ interface GameManager {
      */
     fun create(
         plugin: JavaPlugin,
+        host: Player,
         settingsClass: Class<out GameSettings>,
-        scenarios: Set<Scenario> = emptySet(),
         onFinish: (game: Game<out GameSettings>) -> Unit,
     )
 
@@ -27,7 +27,7 @@ interface GameManager {
      * @throws IllegalStateException No game is currently pending
      * @return The started game
      */
-    fun start(players: Collection<Player>): Game<out GameSettings>
+    fun start(game: Game<out GameSettings>, players: Collection<Player>): Game<out GameSettings>
 
     /**
      * Stops the specified game

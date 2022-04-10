@@ -10,6 +10,7 @@ import io.github.janotlelapin.slate.scenarios.HastyBoysScenario
 import io.github.janotlelapin.slate.util.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import org.bukkit.WorldCreator
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -75,6 +76,8 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
         server.pluginManager.registerEvents(this, this)
         registerEvents(GameSettings::class.java, CutCleanScenario(), this)
         registerEvents(GameSettings::class.java, HastyBoysScenario(), this)
+
+        WorldCreator("wait").createWorld()
 
         logger.info("Enabling Slate")
     }
