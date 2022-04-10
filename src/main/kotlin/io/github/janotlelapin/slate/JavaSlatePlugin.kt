@@ -1,5 +1,6 @@
 package io.github.janotlelapin.slate
 
+import io.github.janotlelapin.slate.command.SlateCommand
 import io.github.janotlelapin.slate.event.GameListener
 import io.github.janotlelapin.slate.game.Game
 import io.github.janotlelapin.slate.game.GameSettings
@@ -88,6 +89,8 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
         if (config.getBoolean("slateOnly")) server.pluginManager.registerEvents(SlateOnlyListener(), this)
         registerEvents(GameSettings::class.java, CutCleanScenario(), this)
         registerEvents(GameSettings::class.java, HastyBoysScenario(), this)
+
+        getCommand("slate").executor = SlateCommand(this)
 
         WorldCreator("wait").createWorld()
 

@@ -4,3 +4,7 @@ version: 1.0-SNAPSHOT
 author: JanotLeLapin
 load: POSTWORLD
 main: io.github.janotlelapin.slate.JavaSlatePlugin
+commands:
+    slate:
+        description: Slate state summary
+        permission: op

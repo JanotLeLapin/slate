@@ -6,7 +6,7 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class SlateGameManager : GameManager {
-    private val games: HashMap<UUID, SlateGame<out GameSettings>> = HashMap()
+    val games: HashMap<UUID, SlateGame<out GameSettings>> = HashMap()
 
     override fun game(id: UUID): SlateGame<out GameSettings>? {
         return games[id]
