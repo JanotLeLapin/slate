@@ -15,8 +15,8 @@ repositories {
 }
 
 dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
     compileOnly 'com.github.azbh111:craftbukkit-1.8.8:R'
-    api 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
 
     api 'net.kyori:adventure-api:4.10.1'
     api 'net.kyori:adventure-text-serializer-legacy:4.10.1'

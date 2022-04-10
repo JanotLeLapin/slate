@@ -16,6 +16,8 @@ repositories {
 
 dependencies {
     implementation project(':slate-api')
+    compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
+    compileOnly 'com.github.azbh111:craftbukkit-1.8.8:R'
 
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.10'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
