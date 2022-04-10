@@ -4,6 +4,7 @@ import io.github.janotlelapin.slate.event.GameListener
 import io.github.janotlelapin.slate.game.Game
 import io.github.janotlelapin.slate.game.GameSettings
 import io.github.janotlelapin.slate.game.SlateGameManager
+import io.github.janotlelapin.slate.menu.SlateMenu
 import io.github.janotlelapin.slate.scenarios.CutCleanScenario
 import io.github.janotlelapin.slate.scenarios.HastyBoysScenario
 import io.github.janotlelapin.slate.util.*
@@ -15,7 +16,9 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockEvent
 import org.bukkit.event.entity.*
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryEvent
+import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerEvent
 import org.bukkit.event.player.PlayerJoinEvent
@@ -23,10 +26,13 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.vehicle.VehicleEvent
 import org.bukkit.event.weather.WeatherEvent
 import org.bukkit.event.world.ChunkUnloadEvent
+import org.bukkit.inventory.Inventory
 import org.bukkit.plugin.java.JavaPlugin
 
 class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
     override val gameManager: SlateGameManager = SlateGameManager()
+
+    private val menus: HashMap<Inventory, SlateMenu> = hashMapOf()
 
     override fun registerEvents(settingsType: Class<out GameSettings>, listener: GameListener, plugin: JavaPlugin) {
         for (handler in listener::class.java.declaredMethods) {
@@ -56,6 +62,13 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
                 plugin,
             )
         }
+    }
+
+    override fun createMenu(type: InventoryType, title: Component): SlateMenu {
+        val inv = server.createInventory(null, type, title.legacy())
+        val menu = SlateMenu(inv)
+        menus[inv] = menu
+        return menu
     }
 
     override fun onEnable() {
@@ -152,5 +165,16 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
     fun onChunkUnload(e: ChunkUnloadEvent) {
         if (e.world.game<GameSettings>() == null) return
         e.isCancelled = true
+    }
+
+    @EventHandler
+    fun onInventory(e: InventoryClickEvent) {
+        val menu = menus[e.inventory] ?: return
+        e.isCancelled = true
+
+        val element = menu.elements[e.slot] ?: return
+        val p = e.view.player as Player
+        element.click(p)
+        menu.draw()
     }
 }
