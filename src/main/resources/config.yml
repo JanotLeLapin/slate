@@ -7,3 +7,7 @@ wait:
   x: 0
   y: 128
   z: 0
+
+# Whether Slate should disable hunger, damage etc... outside of games.
+# Set to false if your server uses plugins that don't depend on Slate.
+slateOnly: true

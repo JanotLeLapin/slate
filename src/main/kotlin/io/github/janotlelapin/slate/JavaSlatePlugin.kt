@@ -4,12 +4,12 @@ import io.github.janotlelapin.slate.event.GameListener
 import io.github.janotlelapin.slate.game.Game
 import io.github.janotlelapin.slate.game.GameSettings
 import io.github.janotlelapin.slate.game.SlateGameManager
+import io.github.janotlelapin.slate.listeners.SlateOnlyListener
 import io.github.janotlelapin.slate.menu.SlateMenu
 import io.github.janotlelapin.slate.scenarios.CutCleanScenario
 import io.github.janotlelapin.slate.scenarios.HastyBoysScenario
 import io.github.janotlelapin.slate.util.*
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Location
 import org.bukkit.WorldCreator
 import org.bukkit.entity.Player
@@ -24,8 +24,6 @@ import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerEvent
-import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.vehicle.VehicleEvent
 import org.bukkit.event.weather.WeatherEvent
 import org.bukkit.event.world.ChunkUnloadEvent
@@ -84,13 +82,14 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
     }
 
     override fun onEnable() {
+        saveDefaultConfig()
+
         server.pluginManager.registerEvents(this, this)
+        if (config.getBoolean("slateOnly")) server.pluginManager.registerEvents(SlateOnlyListener(), this)
         registerEvents(GameSettings::class.java, CutCleanScenario(), this)
         registerEvents(GameSettings::class.java, HastyBoysScenario(), this)
 
         WorldCreator("wait").createWorld()
-
-        saveDefaultConfig()
 
         logger.info("Enabling Slate")
     }
@@ -100,62 +99,13 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
     }
 
     @EventHandler
-    fun onFood(e: FoodLevelChangeEvent) {
-        val p = e.entity
-        if (p !is Player) return
-
-        if (p.game<GameSettings>()?.running() != true)
-            e.foodLevel = 20
-    }
-
-    @EventHandler
-    fun onDamage(e: EntityDamageEvent) {
-        val p = e.entity
-
-        if (p is Player && p.game<GameSettings>()?.running() != true)
-            e.isCancelled = true
-    }
-
-    @EventHandler
     fun onChat(e: AsyncPlayerChatEvent) {
         val game = e.player.game<GameSettings>() ?: return
 
-        e.isCancelled = true
-        e.player.sendMessage(game.settings.noChatMessage)
-    }
-
-    @EventHandler
-    fun onJoin(e: PlayerJoinEvent) {
-        val p = e.player
-
-        val game = p.game<GameSettings>()
-        if (game == null)
-            p.clear(this)
-        else
-            p.scoreboard = game.scoreboard
-
-        val msg = Component
-            .text("[").color(NamedTextColor.GRAY)
-            .append(Component.text("+").color(NamedTextColor.GREEN))
-            .append(Component.text("]"))
-            .append(Component.space())
-            .append(Component.text("${e.player.name} a rejoint la partie"))
-
-        e.joinMessage = null
-        p.world.players.forEach { it.sendMessage(msg) }
-    }
-
-    @EventHandler
-    fun onQuit(e: PlayerQuitEvent) {
-        val msg = Component
-            .text("[").color(NamedTextColor.GRAY)
-            .append(Component.text("-").color(NamedTextColor.RED))
-            .append(Component.text("]"))
-            .append(Component.space())
-            .append(Component.text("${e.player.name} a quitté la partie"))
-
-        e.quitMessage = null
-        e.player.world.players.forEach { it.sendMessage(msg) }
+        if (game.settings.disableChat) {
+            e.isCancelled = true
+            e.player.sendMessage(game.settings.noChatMessage)
+        }
     }
 
     @EventHandler
@@ -180,14 +130,12 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
 
     @EventHandler
     fun onChunkUnload(e: ChunkUnloadEvent) {
-        if (e.world.game<GameSettings>() == null) return
-        e.isCancelled = true
+        if (e.world.game<GameSettings>() != null) e.isCancelled = true
     }
 
     @EventHandler
     fun onWorldInit(e: WorldInitEvent) {
-        if (e.world.game<GameSettings>() == null) return
-        e.world.keepSpawnInMemory = false
+        if (e.world.game<GameSettings>() != null) e.world.keepSpawnInMemory = false
     }
 
     @EventHandler

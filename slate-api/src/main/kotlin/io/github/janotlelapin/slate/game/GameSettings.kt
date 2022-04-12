@@ -64,6 +64,11 @@ abstract class GameSettings {
         .color(NamedTextColor.RED)
 
     /**
+     * Whether the chat is blocked on the game
+     */
+    open val disableChat: Boolean = true
+
+    /**
      * The message sent to a player when the border is disabled
      */
     open val noChatMessage: Component = Component
