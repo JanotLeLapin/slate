@@ -24,7 +24,10 @@ class CutCleanScenario : GameListener {
             else -> null
         } ?: return
 
-        e.setDrops(arrayListOf(ItemStack(material)))
+        e.setDrops(
+           if (e.block.getDrops(e.player.itemInHand).isEmpty()) arrayListOf()
+           else arrayListOf(ItemStack(material))
+        )
     }
 
     @EventHandler
