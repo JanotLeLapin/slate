@@ -92,10 +92,7 @@ class SlateGame<S : GameSettings>(
         object: BukkitRunnable() {
             override fun run() {
                 plugin.logger.info("Creating world for $id")
-                val c = WorldCreator("world_$id")
-                c.generator()
-
-                val w = c.createWorld()
+                val w = WorldCreator("world_$id").createWorld()
                 if (settings.badBiomes.contains(w.getBiome(0, 0))) {
                     w.delete()
                     prepare(onFinish)

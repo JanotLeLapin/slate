@@ -135,7 +135,10 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
 
     @EventHandler
     fun onWorldInit(e: WorldInitEvent) {
-        if (e.world.game<GameSettings>() != null) e.world.keepSpawnInMemory = false
+        if (e.world.game<GameSettings>() != null) {
+            e.world.keepSpawnInMemory = false
+            e.world.isAutoSave = false
+        }
     }
 
     @EventHandler
