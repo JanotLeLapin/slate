@@ -209,13 +209,19 @@ fun Location.toComponent(
     return comp
 }
 
-fun World.ground(x: Int, z: Int, start: Int = 48, end: Int = 255): Int? {
-    if (start > end) return null
+/**
+ * @return the altitude of a block of air right above a block of grass, or -1 if such a block does not exist
+ */
+fun World.ground(x: Int, z: Int, start: Int = 48, end: Int = 255): Int {
+    if (start > end) return -1
 
     val y = floor(((start + end) / 2).toDouble()).toInt()
     val block = getBlockAt(x, y, z).type
 
-    if (block == Material.GRASS) return y + 1
+    if (block == Material.GRASS) {
+        if (getBlockAt(x, y + 2, z).type == Material.AIR) return y + 1
+        return -1
+    }
     if (block == Material.AIR) return ground(x, z, start, y - 1)
     return ground(x, z, y + 1, end)
 }
@@ -229,10 +235,10 @@ fun World.randomCoordinates(range: Int = 500): Location {
     while (true) {
         val x = random()
         val z = random()
-        val y = ground(x, z) ?: continue
+        val y = ground(x, z)
+        if (y == -1) continue
 
-        if ((0..4).map { getBlockAt(x, y + it, z).type }.all { it == Material.AIR })
-            return Location(this, x + .5, y.toDouble(), z + .5)
+        return Location(this, x + .5, y.toDouble(), z + .5)
     }
 }
 

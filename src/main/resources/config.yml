@@ -1,0 +1,9 @@
+# Settings for the "waiting room" world
+wait:
+  # Name of the world
+  world: wait
+
+  # Coordinates
+  x: 0
+  y: 128
+  z: 0

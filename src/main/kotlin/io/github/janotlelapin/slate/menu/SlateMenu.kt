@@ -8,7 +8,6 @@ class SlateMenu(private val inventory: Inventory) : Menu {
 
     override fun open(player: Player) {
         player.openInventory(inventory)
-        draw()
     }
 
     override fun element(slot: Number, element: MenuElement): SlateMenu {
@@ -19,8 +18,8 @@ class SlateMenu(private val inventory: Inventory) : Menu {
     fun draw() {
         inventory.viewers.forEach {
             if (it !is Player) return
-            it.openInventory.topInventory.clear()
-            elements.forEach { (s, e) -> if (!e.hidden) it.openInventory.setItem(s.toInt(), e.display(it)) }
+            inventory.clear()
+            elements.forEach { (s, e) -> if (!e.hidden) inventory.setItem(s.toInt(), e.display(it)) }
         }
     }
 }

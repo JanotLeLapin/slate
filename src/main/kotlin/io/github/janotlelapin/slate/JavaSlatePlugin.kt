@@ -10,6 +10,7 @@ import io.github.janotlelapin.slate.scenarios.HastyBoysScenario
 import io.github.janotlelapin.slate.util.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import org.bukkit.Location
 import org.bukkit.WorldCreator
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
@@ -19,6 +20,7 @@ import org.bukkit.event.block.BlockEvent
 import org.bukkit.event.entity.*
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryEvent
+import org.bukkit.event.inventory.InventoryOpenEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerEvent
@@ -27,11 +29,20 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.vehicle.VehicleEvent
 import org.bukkit.event.weather.WeatherEvent
 import org.bukkit.event.world.ChunkUnloadEvent
+import org.bukkit.event.world.WorldInitEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.plugin.java.JavaPlugin
 
 class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
     override val gameManager: SlateGameManager = SlateGameManager()
+
+    override val waitLocation: Location
+        get() = Location(
+            server.getWorld(config.getString("wait.world")),
+            config.getDouble("wait.x"),
+            config.getDouble("wait.y"),
+            config.getDouble("wait.z"),
+        )
 
     private val menus: HashMap<Inventory, SlateMenu> = hashMapOf()
 
@@ -79,6 +90,8 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
 
         WorldCreator("wait").createWorld()
 
+        saveDefaultConfig()
+
         logger.info("Enabling Slate")
     }
 
@@ -91,7 +104,7 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
         val p = e.entity
         if (p !is Player) return
 
-        if (p.game<GameSettings>() == null)
+        if (p.game<GameSettings>()?.running() != true)
             e.foodLevel = 20
     }
 
@@ -99,7 +112,7 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
     fun onDamage(e: EntityDamageEvent) {
         val p = e.entity
 
-        if (p is Player && p.game<GameSettings>() == null)
+        if (p is Player && p.game<GameSettings>()?.running() != true)
             e.isCancelled = true
     }
 
@@ -157,6 +170,7 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
     fun onPlayerDeath(e: PlayerDeathEvent) {
         val p = e.entity
         val game = p.game<GameSettings>() ?: return
+        if (!game.running()) return
 
         val l = p.location
         p.isGameDead(true, game.plugin)
@@ -171,7 +185,19 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
     }
 
     @EventHandler
-    fun onInventory(e: InventoryClickEvent) {
+    fun onWorldInit(e: WorldInitEvent) {
+        if (e.world.game<GameSettings>() == null) return
+        e.world.keepSpawnInMemory = false
+    }
+
+    @EventHandler
+    fun onInventoryOpen(e: InventoryOpenEvent) {
+        val menu = menus[e.inventory] ?: return
+        menu.draw()
+    }
+
+    @EventHandler
+    fun onInventoryClick(e: InventoryClickEvent) {
         val menu = menus[e.inventory] ?: return
         e.isCancelled = true
 

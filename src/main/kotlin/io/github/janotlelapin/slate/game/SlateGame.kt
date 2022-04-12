@@ -76,21 +76,26 @@ class SlateGame<S : GameSettings>(
 
     fun prepare(
         onFinish: (game: Game<out GameSettings>) -> Unit,
-        waitingWorldName: String = "wait",
     ) {
         if (ready) return
 
-        waitWorld = plugin.server.getWorld(waitingWorldName).copy("wait_$id")
-        host().let { if (it is Player) it.teleport(Location(
-            waitWorld,
-            0.0,
-            75.0,
-            0.0)) }
+        slateInstance().waitLocation.let { l ->
+            waitWorld = l.world.copy("wait_$id")
+            host().let { if (it is Player) it.teleport(Location(
+                waitWorld,
+                l.x,
+                l.y,
+                l.z))
+            }
+        }
 
         object: BukkitRunnable() {
             override fun run() {
                 plugin.logger.info("Creating world for $id")
-                val w = WorldCreator("world_$id").createWorld()
+                val c = WorldCreator("world_$id")
+                c.generator()
+
+                val w = c.createWorld()
                 if (settings.badBiomes.contains(w.getBiome(0, 0))) {
                     w.delete()
                     prepare(onFinish)
