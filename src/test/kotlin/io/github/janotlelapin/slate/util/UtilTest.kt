@@ -34,6 +34,13 @@ class UtilTest {
     }
 
     @Test
+    fun timeString() {
+        Assertions.assertEquals("00:04", 4.toTimeString())
+        Assertions.assertEquals("10:10", 610.toTimeString())
+        Assertions.assertEquals("100:30", 6030.toTimeString())
+    }
+
+    @Test
     fun worldGround() {
         Assertions.assertEquals(68, w1.ground(0, 0))
         Assertions.assertEquals(53, w2.ground(0, 0))
