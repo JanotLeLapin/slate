@@ -9,8 +9,6 @@ import org.bukkit.WorldCreator
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
-import org.bukkit.scoreboard.DisplaySlot
-import org.bukkit.scoreboard.Objective
 import org.bukkit.scoreboard.Scoreboard
 import java.util.*
 import kotlin.collections.ArrayList
@@ -33,13 +31,6 @@ class SlateGame<S : GameSettings>(
     override val settings: S = settingsClass
         .getDeclaredConstructor(Game::class.java)
         .newInstance(this)
-    override val objective: Objective = scoreboard.registerNewObjective(id.toString().substring(0, 8), "dummy")
-    override val sidebar: SlateSidebar = SlateSidebar(
-        id,
-        scoreboard,
-        objective,
-        settings.brand,
-    )
 
     override lateinit var world: World
     private var waitWorld: World? = null
@@ -168,9 +159,5 @@ class SlateGame<S : GameSettings>(
 
     override fun running(): Boolean {
         return running
-    }
-
-    init {
-        objective.displaySlot = DisplaySlot.SIDEBAR
     }
 }

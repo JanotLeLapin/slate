@@ -1,12 +1,10 @@
 package io.github.janotlelapin.slate.game
 
 import io.github.janotlelapin.slate.Scenario
-import io.github.janotlelapin.slate.util.Sidebar
 import org.bukkit.OfflinePlayer
 import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scoreboard.Objective
 import org.bukkit.scoreboard.Scoreboard
 import java.util.*
 
@@ -37,20 +35,10 @@ interface Game<S : GameSettings> {
     val settings: S
 
     /**
-     * The custom sidebar shown to players in this game
-     */
-    val sidebar: Sidebar
-
-    /**
      * The scoreboard assigned to each player in this game.
      * Used by the sidebar, among other things
      */
     val scoreboard: Scoreboard
-
-    /**
-     * The objective used by the scoreboard to display the sidebar
-     */
-    val objective: Objective
 
     /**
      * The world in which this game takes place

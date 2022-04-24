@@ -1,24 +1,20 @@
 package io.github.janotlelapin.slate.util
 
 import net.kyori.adventure.text.Component
+import org.bukkit.entity.Player
 import org.bukkit.scoreboard.Objective
-import org.bukkit.scoreboard.Scoreboard
-import java.util.*
+
+/**
+ * Sets the sidebar of the player
+ */
+fun Player.sidebar(sidebar: Sidebar) {
+    scoreboard = sidebar.objective.scoreboard
+}
 
 /**
  * An efficient and easy to use sidebar API
  */
 interface Sidebar {
-    /**
-     * The id of the game responsible for this sidebar
-     */
-    val id: UUID
-
-    /**
-     * The scoreboard used by this sidebar
-     */
-    val scoreboard: Scoreboard
-
     /**
      * The objective used by this sidebar
      */

@@ -4,6 +4,7 @@ import io.github.janotlelapin.slate.event.GameListener
 import io.github.janotlelapin.slate.game.GameManager
 import io.github.janotlelapin.slate.game.GameSettings
 import io.github.janotlelapin.slate.menu.Menu
+import io.github.janotlelapin.slate.util.Sidebar
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
 import org.bukkit.event.inventory.InventoryType
@@ -29,4 +30,9 @@ interface SlatePlugin {
      * Creates a menu inventory
      */
     fun createMenu(type: InventoryType, title: Component): Menu
+
+    /**
+     * Creates a sidebar
+     */
+    fun createSidebar(title: Component): Sidebar
 }

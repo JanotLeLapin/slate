@@ -82,6 +82,13 @@ class JavaSlatePlugin : Listener, SlatePlugin, JavaPlugin() {
         return menu
     }
 
+    override fun createSidebar(title: Component): SlateSidebar {
+        return SlateSidebar(
+            server.scoreboardManager.newScoreboard,
+            title,
+        )
+    }
+
     override fun onEnable() {
         saveDefaultConfig()
 
